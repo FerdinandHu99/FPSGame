@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/">
+    <qresource prefix="/shader">
         <file>drawtriangle.frag</file>
         <file>drawtriangle.vert</file>
     </qresource>

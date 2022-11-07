@@ -6,20 +6,34 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>521</width>
-    <height>456</height>
+    <width>656</width>
+    <height>480</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="widget"/>
-  <widget class="QMenuBar" name="menuBar">
+  <widget class="QWidget" name="centralWiget">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <widget class="HFOpenGLWiget" name="openGLWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>661</width>
+      <height>441</height>
+     </rect>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>521</width>
+     <width>656</width>
      <height>21</height>
     </rect>
    </property>
@@ -30,12 +44,12 @@
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
-     <string>查看</string>
+     <string>编辑</string>
     </property>
    </widget>
    <widget class="QMenu" name="menu_3">
     <property name="title">
-     <string>设置</string>
+     <string>工具</string>
     </property>
    </widget>
    <widget class="QMenu" name="menu_4">
@@ -48,18 +62,15 @@
    <addaction name="menu_3"/>
    <addaction name="menu_4"/>
   </widget>
-  <widget class="QToolBar" name="mainToolBar">
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="separator"/>
-  </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>HFOpenGLWiget</class>
+   <extends>QOpenGLWidget</extends>
+   <header location="global">hfopenglwiget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
