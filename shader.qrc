@@ -3,4 +3,7 @@
         <file>drawtriangle.frag</file>
         <file>drawtriangle.vert</file>
     </qresource>
+    <qresource prefix="/texture">
+        <file>Texture/container.jpg</file>
+    </qresource>
 </RCC>
