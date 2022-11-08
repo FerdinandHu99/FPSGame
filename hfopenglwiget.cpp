@@ -9,16 +9,18 @@ HFOpenGLWiget::HFOpenGLWiget(QWidget *parent) : QOpenGLWidget (parent), m_VBO(QO
 HFOpenGLWiget::~HFOpenGLWiget()
 {
     makeCurrent();
-//    m_VAO.destroy();
-//    m_EBO.destroy();
-//    m_VBO.destroy();
-//    m_texture.destroy();
-//    doneCurrent();
+    m_VAO.destroy();
+    m_EBO.destroy();
+    m_VBO.destroy();
+    m_texture.destroy();
+    m_texture1.destroy();
+    doneCurrent();
 }
 
 void HFOpenGLWiget::initializeGL()
 {
     initializeOpenGLFunctions();
+    glEnable(GL_DEPTH_TEST); // 开启深度测试
 
     GLfloat vertices[] = {
         -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
@@ -71,6 +73,10 @@ void HFOpenGLWiget::initializeGL()
     m_texture.release();
     m_texture1.release();
     m_shaderProgram.release();
+
+//    QMatrix4x4 model;
+//    model.translate(QVector3D(-1, -2, -5));
+//    qDebug() << "调试";
 }
 
 void HFOpenGLWiget::resizeGL(int w, int h)
@@ -82,18 +88,36 @@ void HFOpenGLWiget::paintGL()
 {
     // 清空并更新背景颜色
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     m_shaderProgram.bind();
 
     // 绑定并使用纹理0
     m_texture.bind(0);
-    GLint ourTextureLoc = m_shaderProgram.uniformLocation("ourTexture");
+    int ourTextureLoc = m_shaderProgram.uniformLocation("ourTexture");
     m_shaderProgram.setUniformValue(ourTextureLoc, 0);
     // 绑定并使用纹理1
     m_texture1.bind(1);
-    GLint ourTextureLoc1 = m_shaderProgram.uniformLocation("ourTexture1");
+    int ourTextureLoc1 = m_shaderProgram.uniformLocation("ourTexture1");
     m_shaderProgram.setUniformValue(ourTextureLoc1, 1);
+
+    // 模型矩阵
+    QMatrix4x4 model;
+    model.rotate(-45, QVector3D(1, 0, 0));
+    int modelLoc = m_shaderProgram.uniformLocation("model");
+    m_shaderProgram.setUniformValue(modelLoc, model);
+
+    // 观察矩阵
+    QMatrix4x4 view;
+    view.translate(QVector3D(0, 0, -3));
+    int viewLoc = m_shaderProgram.uniformLocation("view");
+    m_shaderProgram.setUniformValue(viewLoc, view);
+
+    // 投影矩阵
+    QMatrix4x4 projection;
+    projection.perspective(45, static_cast<float>(width()/height()), 0.1, 100);
+    int projectionLoc = m_shaderProgram.uniformLocation("projection");
+    m_shaderProgram.setUniformValue(projectionLoc, projection);
 
     m_VAO.bind();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);

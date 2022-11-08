@@ -7,6 +7,8 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLTexture>
+#include <QMatrix4x4>
+#include <QVector3D>
 
 class HFOpenGLWiget : public QOpenGLWidget, protected QOpenGLExtraFunctions
 {
@@ -14,6 +16,7 @@ class HFOpenGLWiget : public QOpenGLWidget, protected QOpenGLExtraFunctions
 public:
     explicit HFOpenGLWiget(QWidget *parent = nullptr);
     ~HFOpenGLWiget();
+
 
 protected:
     virtual void initializeGL();
