@@ -9,7 +9,7 @@
 #include <QOpenGLTexture>
 #include <QMatrix4x4>
 #include <QVector3D>
-
+#include <QTime>
 class HFOpenGLWiget : public QOpenGLWidget, protected QOpenGLExtraFunctions
 {
     Q_OBJECT
@@ -29,6 +29,7 @@ private:
     QOpenGLBuffer m_EBO;
     QOpenGLTexture m_texture;
     QOpenGLTexture m_texture1;
+    QTime m_time;
 };
 
 #endif // HFOPENGLWIGET_H
