@@ -25,6 +25,7 @@ private:
     QOpenGLBuffer m_VBO;
     QOpenGLBuffer m_EBO;
     QOpenGLTexture m_texture;
+    QOpenGLTexture m_texture1;
 };
 
 #endif // HFOPENGLWIGET_H

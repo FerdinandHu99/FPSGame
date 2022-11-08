@@ -1,7 +1,7 @@
 #include "hfopenglwiget.h"
 
 HFOpenGLWiget::HFOpenGLWiget(QWidget *parent) : QOpenGLWidget (parent), m_VBO(QOpenGLBuffer::VertexBuffer), m_EBO(QOpenGLBuffer::IndexBuffer),
-                                                m_texture(QOpenGLTexture::Target2D)
+                                                m_texture(QOpenGLTexture::Target2D), m_texture1(QOpenGLTexture::Target2D)
 {
 
 }
@@ -47,6 +47,9 @@ void HFOpenGLWiget::initializeGL()
     m_texture.create();
     m_texture.setData(QImage(":/texture/Texture/container.jpg"));
 
+    m_texture1.create();
+    m_texture1.setData(QImage(":/texture/Texture/awesomeface.png"));
+
     // 创建Shader程序并编译
     m_shaderProgram.create();
     m_shaderProgram.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shader/drawtriangle.vert");
@@ -65,6 +68,8 @@ void HFOpenGLWiget::initializeGL()
     m_VAO.release();
     m_VBO.release();
     m_EBO.release();
+    m_texture.release();
+    m_texture1.release();
     m_shaderProgram.release();
 }
 
@@ -85,6 +90,10 @@ void HFOpenGLWiget::paintGL()
     m_texture.bind(0);
     GLint ourTextureLoc = m_shaderProgram.uniformLocation("ourTexture");
     m_shaderProgram.setUniformValue(ourTextureLoc, 0);
+    // 绑定并使用纹理1
+    m_texture1.bind(1);
+    GLint ourTextureLoc1 = m_shaderProgram.uniformLocation("ourTexture1");
+    m_shaderProgram.setUniformValue(ourTextureLoc1, 1);
 
     m_VAO.bind();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
