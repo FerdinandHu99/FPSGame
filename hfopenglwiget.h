@@ -11,6 +11,8 @@
 #include <QVector3D>
 #include <QTime>
 #include <QKeyEvent>
+#include <QMouseEvent>
+#include <QPoint>
 #include <hfcamera.h>
 class HFOpenGLWiget : public QOpenGLWidget, protected QOpenGLExtraFunctions
 {
@@ -25,6 +27,8 @@ protected:
     virtual void resizeGL(int w, int h) override;
     virtual void paintGL() override;
     void keyPressEvent(QKeyEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void wheelEvent(QWheelEvent *event) override;
 private:
     QOpenGLShaderProgram m_shaderProgram;
     QOpenGLVertexArrayObject m_VAO;
@@ -32,9 +36,14 @@ private:
     QOpenGLBuffer m_EBO;
     QOpenGLTexture m_texture;
     QOpenGLTexture m_texture1;
+
+    // 帧率计算
     QTime m_time;
     int m_currentTime;
     int m_lastTime;
+
+    // 鼠标控制
+    QPoint m_lastMousePoint;
 
     // 声明一个摄像头
     HFCamera m_camera;

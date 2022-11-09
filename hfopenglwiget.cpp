@@ -4,11 +4,14 @@ HFOpenGLWiget::HFOpenGLWiget(QWidget *parent) : QOpenGLWidget (parent), m_VBO(QO
                                                 m_texture(QOpenGLTexture::Target2D), m_texture1(QOpenGLTexture::Target2D)
 {
     this->setFocusPolicy(Qt::StrongFocus);
+    this->setMouseTracking(true); // 启用鼠标跟踪
     // 时间开始
     m_currentTime = 0;
     m_lastTime = 0;
     m_time.start();
 
+    // 将鼠标初始位置设为中间位置
+    m_lastMousePoint = QPoint(width() / 2, height() / 2);
 }
 
 HFOpenGLWiget::~HFOpenGLWiget()
@@ -129,7 +132,7 @@ void HFOpenGLWiget::paintGL()
     m_currentTime = m_time.elapsed();
     int FPS = (1.0 / (m_currentTime - m_lastTime)) * 1000;
     m_lastTime = m_currentTime;
-    qDebug() << FPS ;
+    //qDebug() << FPS ;
 
     // 清空并更新背景颜色
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -163,7 +166,7 @@ void HFOpenGLWiget::paintGL()
 
     // 投影矩阵
     QMatrix4x4 projection;
-    projection.perspective(45, static_cast<float>(width()/height()), 0.1f, 100.0f);
+    projection.perspective(m_camera.FOV, static_cast<float>(width()/height()), 0.1f, 100.0f);
     int projectionLoc = m_shaderProgram.uniformLocation("projection");
     m_shaderProgram.setUniformValue(projectionLoc, projection);
 
@@ -194,4 +197,24 @@ void HFOpenGLWiget::keyPressEvent(QKeyEvent *event)
     default:
         break;
     }
+}
+
+// 接收键盘事件
+void HFOpenGLWiget::mouseMoveEvent(QMouseEvent *event)
+{
+    QPoint currentMousePoint = event->pos();
+    QPoint deltaMousePoint = currentMousePoint - m_lastMousePoint;
+    m_lastMousePoint = currentMousePoint;
+    m_camera.processMouseMovement(deltaMousePoint);
+}
+
+
+// 鼠标滚轮事件
+void HFOpenGLWiget::wheelEvent(QWheelEvent *event)
+{
+    if (m_camera.FOV >= 1.0f && m_camera.FOV <= 60.0f) {
+        m_camera.FOV -= event->angleDelta().y()/120;
+    }
+    if (m_camera.FOV <= 1.0f) m_camera.FOV = 1.0f;
+    if (m_camera.FOV >= 60.0f) m_camera.FOV = 60.0f;
 }
