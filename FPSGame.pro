@@ -25,11 +25,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+    hfcamera.cpp \
     hfopenglwiget.cpp \
         main.cpp \
         mainwindow.cpp \
 
 HEADERS += \
+    hfcamera.h \
     hfopenglwiget.h \
         mainwindow.h \
 

@@ -10,6 +10,8 @@
 #include <QMatrix4x4>
 #include <QVector3D>
 #include <QTime>
+#include <QKeyEvent>
+#include <hfcamera.h>
 class HFOpenGLWiget : public QOpenGLWidget, protected QOpenGLExtraFunctions
 {
     Q_OBJECT
@@ -19,9 +21,10 @@ public:
 
 
 protected:
-    virtual void initializeGL();
-    virtual void resizeGL(int w, int h);
-    virtual void paintGL();
+    virtual void initializeGL() override;
+    virtual void resizeGL(int w, int h) override;
+    virtual void paintGL() override;
+    void keyPressEvent(QKeyEvent *event) override;
 private:
     QOpenGLShaderProgram m_shaderProgram;
     QOpenGLVertexArrayObject m_VAO;
@@ -30,6 +33,11 @@ private:
     QOpenGLTexture m_texture;
     QOpenGLTexture m_texture1;
     QTime m_time;
+    int m_currentTime;
+    int m_lastTime;
+
+    // 声明一个摄像头
+    HFCamera m_camera;
 };
 
 #endif // HFOPENGLWIGET_H

@@ -3,8 +3,12 @@
 HFOpenGLWiget::HFOpenGLWiget(QWidget *parent) : QOpenGLWidget (parent), m_VBO(QOpenGLBuffer::VertexBuffer), m_EBO(QOpenGLBuffer::IndexBuffer),
                                                 m_texture(QOpenGLTexture::Target2D), m_texture1(QOpenGLTexture::Target2D)
 {
+    this->setFocusPolicy(Qt::StrongFocus);
     // 时间开始
+    m_currentTime = 0;
+    m_lastTime = 0;
     m_time.start();
+
 }
 
 HFOpenGLWiget::~HFOpenGLWiget()
@@ -112,9 +116,6 @@ void HFOpenGLWiget::initializeGL()
     m_texture1.release();
     m_shaderProgram.release();
 
-//    QMatrix4x4 model;
-//    model.translate(QVector3D(-1, -2, -5));
-//    qDebug() << "调试";
 }
 
 void HFOpenGLWiget::resizeGL(int w, int h)
@@ -124,6 +125,12 @@ void HFOpenGLWiget::resizeGL(int w, int h)
 
 void HFOpenGLWiget::paintGL()
 {
+    // 计算帧率
+    m_currentTime = m_time.elapsed();
+    int FPS = (1.0 / (m_currentTime - m_lastTime)) * 1000;
+    m_lastTime = m_currentTime;
+    qDebug() << FPS ;
+
     // 清空并更新背景颜色
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -141,19 +148,22 @@ void HFOpenGLWiget::paintGL()
 
     // 模型矩阵
     QMatrix4x4 model;
+    //qDebug() << m_time.elapsed();
     model.rotate(m_time.elapsed()/10, QVector3D(1, 0, 0));
     int modelLoc = m_shaderProgram.uniformLocation("model");
     m_shaderProgram.setUniformValue(modelLoc, model);
 
     // 观察矩阵
     QMatrix4x4 view;
-    view.translate(QVector3D(0, 0, -5));
+//    view.translate(QVector3D(0, 0, -6));
+
+    view.lookAt(m_camera.position, m_camera.position+m_camera.orientation, m_camera.up);
     int viewLoc = m_shaderProgram.uniformLocation("view");
     m_shaderProgram.setUniformValue(viewLoc, view);
 
     // 投影矩阵
     QMatrix4x4 projection;
-    projection.perspective(45, static_cast<float>(width()/height()), 0.1, 100);
+    projection.perspective(45, static_cast<float>(width()/height()), 0.1f, 100.0f);
     int projectionLoc = m_shaderProgram.uniformLocation("projection");
     m_shaderProgram.setUniformValue(projectionLoc, projection);
 
@@ -161,5 +171,27 @@ void HFOpenGLWiget::paintGL()
     glDrawArrays(GL_TRIANGLES, 0, 36);
     m_VAO.release();
     m_shaderProgram.release();
+
     update();
+}
+
+// 接收键盘事件
+void HFOpenGLWiget::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->key()) {
+    case Qt::Key_W:
+        m_camera.position += m_camera.keyControlSpeed * m_camera.orientation;
+        break;
+    case Qt::Key_S:
+        m_camera.position -= m_camera.keyControlSpeed * m_camera.orientation;
+        break;
+    case Qt::Key_A:
+        m_camera.position -= QVector3D::crossProduct(m_camera.orientation, m_camera.up).normalized() * m_camera.keyControlSpeed;
+        break;
+    case Qt::Key_D:
+        m_camera.position += QVector3D::crossProduct(m_camera.orientation, m_camera.up).normalized() * m_camera.keyControlSpeed;
+        break;
+    default:
+        break;
+    }
 }
