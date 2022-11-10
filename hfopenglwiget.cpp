@@ -3,14 +3,13 @@
 HFOpenGLWiget::HFOpenGLWiget(QWidget *parent) : QOpenGLWidget (parent), m_VBO(QOpenGLBuffer::VertexBuffer), m_EBO(QOpenGLBuffer::IndexBuffer),
                                                 m_texture(QOpenGLTexture::Target2D), m_texture1(QOpenGLTexture::Target2D)
 {
-    this->setFocusPolicy(Qt::StrongFocus);
-    this->setMouseTracking(true); // 启用鼠标跟踪
+    this->setFocusPolicy(Qt::StrongFocus);                       // 获得焦点
+    this->setMouseTracking(true);                                // 启用鼠标跟踪
+    this->setCursor(QCursor(Qt::BlankCursor));                   // 当前wiget取消鼠标光标
     // 时间开始
     m_lastTime = 0;
     m_time.start();
 
-    // 将鼠标初始位置设为中间位置
-    m_lastMousePoint = QPoint(width() / 2, height() / 2);
 }
 
 HFOpenGLWiget::~HFOpenGLWiget()
@@ -28,6 +27,8 @@ void HFOpenGLWiget::initializeGL()
 {
     initializeOpenGLFunctions();
     glEnable(GL_DEPTH_TEST); // 开启深度测试
+    // 将鼠标初始位置设为中间位置
+    m_lastMousePoint = QPoint(width() / 2, height() / 2);
 
     GLfloat vertices[] = {
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -200,20 +201,15 @@ void HFOpenGLWiget::keyPressEvent(QKeyEvent *event)
 // 接收键盘事件
 void HFOpenGLWiget::mouseMoveEvent(QMouseEvent *event)
 {
-//    QPoint currentMousePoint = event->pos();
-//    QPoint deltaMousePoint = currentMousePoint - m_lastMousePoint;
-//    m_lastMousePoint = currentMousePoint;
-//    m_camera.processMouseMovement(deltaMousePoint);
+    QPoint currentMousePoint = event->pos();
+    QPoint deltaMousePoint = currentMousePoint - m_lastMousePoint;
+    m_lastMousePoint = currentMousePoint;
+    m_camera.processMouseMovement(deltaMousePoint.x(), deltaMousePoint.y());
 }
 
 
 // 鼠标滚轮事件
 void HFOpenGLWiget::wheelEvent(QWheelEvent *event)
 {
-//    if (m_camera.FOV >= 1.0f && m_camera.FOV <= 60.0f) {
-//        m_camera.FOV -= event->angleDelta().y()/120;
-//    }
-//    if (m_camera.FOV <= 1.0f) m_camera.FOV = 1.0f;
-//    if (m_camera.FOV >= 60.0f) m_camera.FOV = 60.0f;
     m_camera.processMouseWheel(event->angleDelta().y());
 }

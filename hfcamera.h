@@ -28,7 +28,6 @@ public:
     void       processMouseWheel(float wheelValue);                                         // 处理鼠标滚轮事件
     QMatrix4x4 getViewMatrix();                                                             // 获得观察矩阵
     float      Fov();                                                                       // 获得摄像机的视野角
-    void       setFov(float Fov);                                                                    // 设置摄像机的视野角
 
 private:
     QVector3D m_position;                    // 摄像机位置

@@ -22,7 +22,13 @@ HFCamera::~HFCamera()
 
 void HFCamera::processMouseMovement(float xOffset, float yOffset)
 {
+    m_Yaw   += (xOffset * m_mouseControlSpeed);
+    m_Pitch -= (yOffset * m_mouseControlSpeed);
 
+    if (m_Pitch >  89.0f) m_Pitch =  89.0f;
+    if (m_Pitch < -89.0f) m_Pitch = -89.0f;
+
+    updateCameraVectors();
 }
 
 void HFCamera::processKeyboard(HFCamera::KeyMovement direction, float deltaTime)
@@ -52,11 +58,6 @@ QMatrix4x4 HFCamera::getViewMatrix()
 float HFCamera::Fov()
 {
     return m_Fov;
-}
-
-void HFCamera::setFov(float Fov)
-{
-    m_Fov = Fov;
 }
 
 // 将角度换算成弧度
