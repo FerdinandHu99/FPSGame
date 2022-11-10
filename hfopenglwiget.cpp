@@ -6,7 +6,6 @@ HFOpenGLWiget::HFOpenGLWiget(QWidget *parent) : QOpenGLWidget (parent), m_VBO(QO
     this->setFocusPolicy(Qt::StrongFocus);
     this->setMouseTracking(true); // 启用鼠标跟踪
     // 时间开始
-    m_currentTime = 0;
     m_lastTime = 0;
     m_time.start();
 
@@ -129,10 +128,11 @@ void HFOpenGLWiget::resizeGL(int w, int h)
 void HFOpenGLWiget::paintGL()
 {
     // 计算帧率
-    m_currentTime = m_time.elapsed();
-    int FPS = (1.0 / (m_currentTime - m_lastTime)) * 1000;
-    m_lastTime = m_currentTime;
-    //qDebug() << FPS ;
+    int currentTime = m_time.elapsed();
+    m_deltaTime = currentTime - m_lastTime;
+    int FPS = (1.0 / m_deltaTime) * 1000;
+    m_lastTime = currentTime;
+    //qDebug() << m_deltaTime ;
 
     // 清空并更新背景颜色
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -158,15 +158,13 @@ void HFOpenGLWiget::paintGL()
 
     // 观察矩阵
     QMatrix4x4 view;
-//    view.translate(QVector3D(0, 0, -6));
-
-    view.lookAt(m_camera.position, m_camera.position+m_camera.orientation, m_camera.up);
+    view = m_camera.getViewMatrix();
     int viewLoc = m_shaderProgram.uniformLocation("view");
     m_shaderProgram.setUniformValue(viewLoc, view);
 
     // 投影矩阵
     QMatrix4x4 projection;
-    projection.perspective(m_camera.FOV, static_cast<float>(width()/height()), 0.1f, 100.0f);
+    projection.perspective(m_camera.Fov(), static_cast<float>(width()/height()), 0.1f, 100.0f);
     int projectionLoc = m_shaderProgram.uniformLocation("projection");
     m_shaderProgram.setUniformValue(projectionLoc, projection);
 
@@ -183,16 +181,16 @@ void HFOpenGLWiget::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
     case Qt::Key_W:
-        m_camera.position += m_camera.keyControlSpeed * m_camera.orientation;
+        m_camera.processKeyboard(HFCamera::FORWARD, m_deltaTime);
         break;
     case Qt::Key_S:
-        m_camera.position -= m_camera.keyControlSpeed * m_camera.orientation;
+        m_camera.processKeyboard(HFCamera::BACKWARD, m_deltaTime);
         break;
     case Qt::Key_A:
-        m_camera.position -= QVector3D::crossProduct(m_camera.orientation, m_camera.up).normalized() * m_camera.keyControlSpeed;
+        m_camera.processKeyboard(HFCamera::LEFT, m_deltaTime);
         break;
     case Qt::Key_D:
-        m_camera.position += QVector3D::crossProduct(m_camera.orientation, m_camera.up).normalized() * m_camera.keyControlSpeed;
+        m_camera.processKeyboard(HFCamera::RIGHT, m_deltaTime);
         break;
     default:
         break;
@@ -202,19 +200,20 @@ void HFOpenGLWiget::keyPressEvent(QKeyEvent *event)
 // 接收键盘事件
 void HFOpenGLWiget::mouseMoveEvent(QMouseEvent *event)
 {
-    QPoint currentMousePoint = event->pos();
-    QPoint deltaMousePoint = currentMousePoint - m_lastMousePoint;
-    m_lastMousePoint = currentMousePoint;
-    m_camera.processMouseMovement(deltaMousePoint);
+//    QPoint currentMousePoint = event->pos();
+//    QPoint deltaMousePoint = currentMousePoint - m_lastMousePoint;
+//    m_lastMousePoint = currentMousePoint;
+//    m_camera.processMouseMovement(deltaMousePoint);
 }
 
 
 // 鼠标滚轮事件
 void HFOpenGLWiget::wheelEvent(QWheelEvent *event)
 {
-    if (m_camera.FOV >= 1.0f && m_camera.FOV <= 60.0f) {
-        m_camera.FOV -= event->angleDelta().y()/120;
-    }
-    if (m_camera.FOV <= 1.0f) m_camera.FOV = 1.0f;
-    if (m_camera.FOV >= 60.0f) m_camera.FOV = 60.0f;
+//    if (m_camera.FOV >= 1.0f && m_camera.FOV <= 60.0f) {
+//        m_camera.FOV -= event->angleDelta().y()/120;
+//    }
+//    if (m_camera.FOV <= 1.0f) m_camera.FOV = 1.0f;
+//    if (m_camera.FOV >= 60.0f) m_camera.FOV = 60.0f;
+    m_camera.processMouseWheel(event->angleDelta().y());
 }

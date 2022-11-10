@@ -39,8 +39,8 @@ private:
 
     // 帧率计算
     QTime m_time;
-    int m_currentTime;
     int m_lastTime;
+    int m_deltaTime;
 
     // 鼠标控制
     QPoint m_lastMousePoint;
