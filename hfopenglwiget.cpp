@@ -154,8 +154,7 @@ void HFOpenGLWiget::paintGL()
 
     // 模型矩阵
     QMatrix4x4 model;
-    //qDebug() << m_time.elapsed();
-    model.rotate(m_time.elapsed()/10, QVector3D(1, 0, 0));
+    model.rotate(m_time.elapsed()/10, QVector3D(0, 1, 0));
     int modelLoc = m_shaderProgram.uniformLocation("model");
     m_shaderProgram.setUniformValue(modelLoc, model);
 
@@ -216,9 +215,15 @@ void HFOpenGLWiget::mouseMoveEvent(QMouseEvent *event)
     QPoint currentMousePoint = event->pos();
     QPoint deltaMousePoint = currentMousePoint - m_lastMousePoint;
     m_lastMousePoint = currentMousePoint;
-    m_camera.processMouseMovement(deltaMousePoint.x(), deltaMousePoint.y());
-}
+    //m_camera.processMouseMovement(deltaMousePoint.x(), deltaMousePoint.y());
+    //qDebug() << event->buttons();
+    if (event->buttons() == Qt::MidButton) {
+        m_camera.processMouseMidBtnMovement(deltaMousePoint.y());
+    } else {
+        m_camera.processMouseMovement(deltaMousePoint.x(), deltaMousePoint.y());
+    }
 
+}
 
 // 鼠标滚轮事件
 void HFOpenGLWiget::wheelEvent(QWheelEvent *event)

@@ -24,6 +24,7 @@ public:
     Q_ENUM(KeyMovement)
 
     void       processMouseMovement(float xOffset, float yOffset);                          // 处理鼠标移动事件
+    void       processMouseMidBtnMovement(float yOffset);                                   // 处理鼠标中键按下并移动鼠标
     void       processKeyboard(HFCamera::KeyMovement direction, float deltaTime);           // 处理键盘WSAD事件
     void       processMouseWheel(float wheelValue);                                         // 处理鼠标滚轮事件
     QMatrix4x4 getViewMatrix();                                                             // 获得观察矩阵

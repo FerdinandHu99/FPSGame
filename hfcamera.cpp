@@ -31,6 +31,12 @@ void HFCamera::processMouseMovement(float xOffset, float yOffset)
     updateCameraVectors();
 }
 
+void HFCamera::processMouseMidBtnMovement(float yOffset)
+{
+    float up = yOffset * m_mouseControlSpeed;
+    m_position -= m_up * up;
+}
+
 void HFCamera::processKeyboard(HFCamera::KeyMovement direction, float deltaTime)
 {
     float velocity = m_keyControlSpeed * deltaTime;
