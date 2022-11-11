@@ -133,7 +133,9 @@ void HFOpenGLWiget::paintGL()
     m_deltaTime = currentTime - m_lastTime;
     int FPS = (1.0 / m_deltaTime) * 1000;
     m_lastTime = currentTime;
-    //qDebug() << m_deltaTime ;
+
+    // 处理键盘事件
+    keyBoardProcess();
 
     // 清空并更新背景颜色
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -177,28 +179,38 @@ void HFOpenGLWiget::paintGL()
     update();
 }
 
-// 接收键盘事件
+// 接收键盘按下事件
 void HFOpenGLWiget::keyPressEvent(QKeyEvent *event)
 {
-    switch (event->key()) {
-    case Qt::Key_W:
-        m_camera.processKeyboard(HFCamera::FORWARD, m_deltaTime);
-        break;
-    case Qt::Key_S:
-        m_camera.processKeyboard(HFCamera::BACKWARD, m_deltaTime);
-        break;
-    case Qt::Key_A:
-        m_camera.processKeyboard(HFCamera::LEFT, m_deltaTime);
-        break;
-    case Qt::Key_D:
-        m_camera.processKeyboard(HFCamera::RIGHT, m_deltaTime);
-        break;
-    default:
-        break;
+    int key = event->key();
+    if (key >= 0 && key < 1024) {
+        if (event->type() == QEvent::KeyPress) {
+            keys[key] = true;
+        }
     }
 }
 
-// 接收键盘事件
+// 接收键盘松开事件
+void HFOpenGLWiget::keyReleaseEvent(QKeyEvent *event)
+{
+    int key = event->key();
+    if (key >= 0 && key < 1024) {
+        if (event->type() == QEvent::KeyRelease) {
+            keys[key] = false;
+        }
+    }
+}
+
+// 键盘事件处理函数（实现多个按键同时按下功能）
+void HFOpenGLWiget::keyBoardProcess()
+{
+    if (keys[Qt::Key_W] == true) m_camera.processKeyboard(HFCamera::FORWARD, m_deltaTime);
+    if (keys[Qt::Key_S] == true) m_camera.processKeyboard(HFCamera::BACKWARD, m_deltaTime);
+    if (keys[Qt::Key_A] == true) m_camera.processKeyboard(HFCamera::LEFT, m_deltaTime);
+    if (keys[Qt::Key_D] == true) m_camera.processKeyboard(HFCamera::RIGHT, m_deltaTime);
+}
+
+// 接收鼠标移动事件
 void HFOpenGLWiget::mouseMoveEvent(QMouseEvent *event)
 {
     QPoint currentMousePoint = event->pos();

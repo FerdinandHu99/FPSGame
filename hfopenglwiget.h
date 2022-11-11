@@ -27,6 +27,8 @@ protected:
     virtual void resizeGL(int w, int h) override;
     virtual void paintGL() override;
     void keyPressEvent(QKeyEvent *event) override;
+    void keyReleaseEvent(QKeyEvent *event) override;
+    void keyBoardProcess();
     void mouseMoveEvent(QMouseEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
 private:
@@ -47,6 +49,8 @@ private:
 
     // 声明一个摄像头
     HFCamera m_camera;
+    // 保存键盘状态的数组
+    bool keys[1024];
 };
 
 #endif // HFOPENGLWIGET_H
