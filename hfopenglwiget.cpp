@@ -5,7 +5,7 @@ HFOpenGLWiget::HFOpenGLWiget(QWidget *parent) : QOpenGLWidget (parent), m_VBO(QO
 {
     this->setFocusPolicy(Qt::StrongFocus);                       // 获得焦点
     this->setMouseTracking(true);                                // 启用鼠标跟踪
-    this->setCursor(QCursor(Qt::BlankCursor));                   // 当前wiget取消鼠标光标
+    this->setCursor(Qt::BlankCursor);                            // 关闭光标显示
     // 时间开始
     m_lastTime = 0;
     m_time.start();
@@ -28,7 +28,7 @@ void HFOpenGLWiget::initializeGL()
     initializeOpenGLFunctions();
     glEnable(GL_DEPTH_TEST); // 开启深度测试
     // 将鼠标初始位置设为中间位置
-    m_lastMousePoint = QPoint(width() / 2, height() / 2);
+    m_centerMousePoint = QPoint(width() / 2, height() / 2);
 
     GLfloat vertices[] = {
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -182,6 +182,8 @@ void HFOpenGLWiget::paintGL()
 void HFOpenGLWiget::keyPressEvent(QKeyEvent *event)
 {
     int key = event->key();
+    // 如果按下Esc键，则退出应用
+    if (key == Qt::Key_Escape) this->parentWidget()->close();
     if (key >= 0 && key < 1024) {
         if (event->type() == QEvent::KeyPress) {
             keys[key] = true;
@@ -213,16 +215,17 @@ void HFOpenGLWiget::keyBoardProcess()
 void HFOpenGLWiget::mouseMoveEvent(QMouseEvent *event)
 {
     QPoint currentMousePoint = event->pos();
-    QPoint deltaMousePoint = currentMousePoint - m_lastMousePoint;
-    m_lastMousePoint = currentMousePoint;
-    //m_camera.processMouseMovement(deltaMousePoint.x(), deltaMousePoint.y());
-    //qDebug() << event->buttons();
+    QPoint deltaMousePoint = currentMousePoint - m_centerMousePoint;
+    //m_lastMousePoint = currentMousePoint;
     if (event->buttons() == Qt::MidButton) {
         m_camera.processMouseMidBtnMovement(deltaMousePoint.y());
+        QPoint center = this->mapToGlobal(m_centerMousePoint);
+        QCursor::setPos(center);
     } else {
         m_camera.processMouseMovement(deltaMousePoint.x(), deltaMousePoint.y());
+        QPoint center = this->mapToGlobal(m_centerMousePoint);
+        QCursor::setPos(center);
     }
-
 }
 
 // 鼠标滚轮事件
@@ -230,3 +233,5 @@ void HFOpenGLWiget::wheelEvent(QWheelEvent *event)
 {
     m_camera.processMouseWheel(event->angleDelta().y());
 }
+
+

@@ -45,7 +45,7 @@ private:
     int m_deltaTime;
 
     // 鼠标控制
-    QPoint m_lastMousePoint;
+    QPoint m_centerMousePoint;
 
     // 声明一个摄像头
     HFCamera m_camera;
