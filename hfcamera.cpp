@@ -66,6 +66,16 @@ float HFCamera::Fov()
     return m_Fov;
 }
 
+QVector3D HFCamera::position()
+{
+    return m_position;
+}
+
+QVector3D HFCamera::orientation()
+{
+    return m_orientation;
+}
+
 // 将角度换算成弧度
 float HFCamera::radians(float angle)
 {

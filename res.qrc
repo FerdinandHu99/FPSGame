@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Images/background.jpeg</file>
+        <file>Images/gun.png</file>
+        <file>Shaders/model.frag</file>
+        <file>Shaders/model.vert</file>
+        <file>Models/container/container.obj</file>
+    </qresource>
+</RCC>
